@@ -1,0 +1,55 @@
+اذهب الى ايه 5
+اذهب الى ايه 5 في سوره البقره
+Number: 5, Last Word: البقره
+Number: 5, Last Word: 5
+Number: 5, Word after "سورة": البقره
+Number: 5, Word after "سورة": البقره
+Number: 5, Word after "سورة": البقره
+Number: 5, Word after "سورة": البقره
+Number: 5, Word after "سورة": ال
+Number: 5, Word after "سورة": الناس
+Number: 5, Word after "سورة": يس
+Number: 5, Word after "سورة": يس
+Number: 5, Word after "سورة": البقره
+Number: 2, Word after "سورة": الفلق
+Number: 5, Word after "سورة": ق
+Number: 10, Word after "سورة": الانبياء
+Number: 5, Word after "سورة": ابراهيم
+Number: 5, Word after "سورة": اذهب
+Number: 5, Word after "سورة": البقره
+Number: 5, Word after "سورة": البقره
+Number: 5, Word after "سورة": يس
+Number: 5, Word after "سورة": يس
+Number: 10, Word after "سورة": ياسين
+Number: 5, Word after "سورة": البقرة
+Number: 10, Word after "سورة": طه
+Number: 5, Word after "سورة": ال
+Number: 5, Word after "سورة": ال
+Number: 5, Word after "سورة": ال ى
+Number: 5, Word after "سورة": ال ى
+Number: 5, Word after "سورة": ى ايه 5 في سوره ال عمران
+Number: 5, Word after "سورة": ال
+Number: 5, Word after "سورة": ال
+Number: 5, Word after "سورة": عمران
+Number: 5, Word after "سورة": آل عمران
+Number: 5, Word after "سورة": الانعام
+Number: 5, Word after "سورة": الانعام
+Number: 5, Word after "سورة": ألأنعأم
+Number: 5, Word after "سورة": الانعام
+Number: 5, Word after "سورة": ال عمران
+Number: 5, Word after "سورة": آل عمران
+Number: 5, Word after "سورة": الانعام
+Number: 5, Word after "سورة": النبا
+Number: 5, Word after "سورة": الاسراء
+Number: 5, Word after "سورة": الانبياء
+Number: 5, Word after "سورة": الاسراء
+Number: 5, Word after "سورة": المؤمنون
+Number: 5, Word after "سورة": ص
+Number: 5, Word after "سورة": الجاثية
+Number: 5, Word after "سورة": النبا
+Number: 5, Word after "سورة": السبا
+Number: 5, Word after "سورة": سبا
+Number: 5, Word after "سورة": الاسراء
+Number: 5, Word after "سورة": البقرة
+Number: 205, Word after "سورة": البقرة
+Number: 5, Word after "سورة": البقرة
