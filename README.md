@@ -1,0 +1,1 @@
+# Quranic-Verse-GP
