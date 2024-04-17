@@ -39,6 +39,15 @@ dependencies:
   flutter_islamic_icons: ^1.0.2
   curved_navigation_bar: ^1.0.3
   speech_to_text: ^6.6.1
+  excel: ^4.0.3
+  csv: ^6.0.0
+  google_fonts: ^6.2.1
+  quran: ^1.2.5
+  shared_preferences: ^2.2.2
+  scrollable_positioned_list: ^0.3.8
+  flutter_native_splash: ^2.2.19
+  url_launcher: ^6.1.11
+  share_plus: ^8.0.3
 
 dev_dependencies:
   flutter_test:
@@ -64,8 +73,18 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-  #   - images/a_dot_burr.jpeg
     - images/
+    - data/tafseer.csv
+    - assets/ic_launcher.png
+    - assets/hafs_smart_v8.json
+
+  fonts:
+    - family: quran
+      fonts:
+        - asset: assets/HafsSmart_08.ttf
+    - family: me_quran
+      fonts:
+        - asset: assets/me_quran.ttf
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

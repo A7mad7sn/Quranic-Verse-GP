@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'ayah_info.dart';
+
 class ModelPage extends StatefulWidget {
   ModelPage({Key? key}) : super(key: key);
 
@@ -14,7 +16,7 @@ class ModelPageState extends State<ModelPage> {
   int selectedRadio = 1;
   List<dynamic> data = [];
   String? errorMessage;
-  bool isSearched=false ;
+  bool isSearched = false;
 
   Future<void> searchVerses() async {
     String wordText = word.text;
@@ -51,100 +53,101 @@ class ModelPageState extends State<ModelPage> {
       });
     }
   }
-  
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    extendBody: true,
-    appBar: AppBar(
-      title: Text("Model Search"),
-    ),
-    body: Container(
-      width: double.infinity,
-      height: double.infinity,
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage("images/body-01.jpg"),
-          fit: BoxFit.cover,
-        ),
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      extendBody: true,
+      appBar: AppBar(
+        title: Text("Model Search"),
       ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Container(
-              width: 500,
-              child: TextField(
-                controller: word,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Color.fromRGBO(232, 223, 195, 1),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: BorderSide(
-                      color: Colors.black,
-                      width: 2,
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("images/body-01.jpg"),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Container(
+                width: 500,
+                child: TextField(
+                  controller: word,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Color.fromRGBO(232, 223, 195, 1),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: BorderSide(
+                        color: Colors.black,
+                        width: 2,
+                      ),
                     ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(width: 2),
+                    ),
+                    labelText: 'Enter search word',
+                    suffixIcon: Icon(Icons.search),
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(width: 2),
-                  ),
-                  labelText: 'Enter search word',
-                  suffixIcon: Icon(Icons.search),
                 ),
               ),
             ),
-          ),
-          Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Container(
-              width: 200,
-              child: TextFormField(
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: Color.fromRGBO(232, 223, 195, 1),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: BorderSide(
-                      color: Colors.black,
-                      width: 2,
+            Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Container(
+                width: 200,
+                child: TextFormField(
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Color.fromRGBO(232, 223, 195, 1),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: BorderSide(
+                        color: Colors.black,
+                        width: 2,
+                      ),
                     ),
+                    labelText: 'Enter verse number',
                   ),
-                  labelText: 'Enter verse number',
+                  onChanged: (value) {
+                    // Handle the changed value
+                    setState(() {
+                      selectedRadio = int.tryParse(value) ?? selectedRadio;
+                    });
+                  },
                 ),
-                onChanged: (value) {
-                  // Handle the changed value
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ElevatedButton(
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(
+                      Color.fromRGBO(232, 223, 195, 1)),
+                ),
+                onPressed: () {
+                  searchVerses();
                   setState(() {
-                    selectedRadio = int.tryParse(value) ?? selectedRadio;
+                    isSearched = true;
                   });
                 },
+                child: Text(
+                  'Search',
+                  style: TextStyle(
+                      color: Colors.black, fontWeight: FontWeight.w500),
+                ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: ElevatedButton(
-              style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all(Color.fromRGBO(232, 223, 195, 1)),
-              ),
-              onPressed: () {
-                searchVerses();
-                setState(() {
-                  isSearched = true;
-                });
-              },
-              child: Text(
-                'Search',
-                style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500),
-              ),
-            ),
-          ),
-          if (errorMessage != null) Text(errorMessage!),
+            if (errorMessage != null) Text(errorMessage!),
             if (isSearched)
-                           
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -164,23 +167,31 @@ Widget build(BuildContext context) {
                     elevation: 3,
                     margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     child: ListTile(
-                      title: Text(
-                        result['Surah Name'] ?? '',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      subtitle: Text(
-                        '${"Verse:"}: ${result['ayah'] ?? ''}',
-                      ),
-                    ),
+                        title: Text(
+                          "${index + 1}",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Text(
+                          '${result['ayah'] ?? ''}',
+                        ),
+                        trailing: IconButton(
+                          icon: Icon(Icons.info),
+                          onPressed: () async {
+                            var info = await get_ayah_info(result['ayah'],false);
+                            showDialog(
+                              context: context,
+                              builder: (context) =>
+                                  build_info_Dialog(info, context),
+                            );
+                          },
+                        )),
                   );
                 },
               ),
             ),
-        ],
+          ],
+        ),
       ),
-    ),
-  );
-}
-
-
+    );
   }
+}

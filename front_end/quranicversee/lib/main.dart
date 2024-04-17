@@ -1,25 +1,30 @@
 import 'dart:convert';
+import 'dart:html';
 
 
 import 'package:flutter/material.dart';
 import 'package:flutter_islamic_icons/flutter_islamic_icons.dart';
 import 'package:http/http.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:quranicversee/quran_main.dart';
 import 'package:quranicversee/search_page.dart';
 import 'package:quranicversee/voice_search_page.dart';
 import 'package:quranicversee/model_page.dart';
 
-
+import 'ayah_info.dart';
+import 'index.dart';
 
 void main() {
+
   runApp(MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Arabic Speech to Text',
+      title: 'Quranic Verse',
       home: HomePage(),
     );
   }
@@ -33,6 +38,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool loading = false;
   List data = [];
+
 
   final items = <Widget>[
     Icon(Icons.home, size: 30),
@@ -63,38 +69,7 @@ class _HomePageState extends State<HomePage> {
             fit: BoxFit.cover,
           ),
         ),
-        child: ListView(
-          children: <Widget>[
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.only(top: 30),
-                    margin: EdgeInsets.symmetric(horizontal: 30),
-                    child: MaterialButton(
-                      color: Colors.red,
-                      textColor: Colors.white,
-                      onPressed: () async {
-                        var response = await get(Uri.parse("https://jsonplaceholder.typicode.com/posts"));
-                        var response_body = jsonDecode(response.body);
-                        data.addAll(response_body);
-                        setState(() {});
-                        print(response_body[0]['title']);
-                      },
-                      child: Text("API request"),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            ...List.generate(data.length, (index) => Card(
-              child: ListTile(
-                title: Text("${data[index]['title']}"),
-              ),
-            )),
-          ],
-        ),
+        child: QuranApp(),
       ),
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(iconTheme: IconThemeData(color: Colors.amber.shade50)),
