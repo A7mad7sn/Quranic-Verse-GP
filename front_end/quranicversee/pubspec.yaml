@@ -41,7 +41,7 @@ dependencies:
   speech_to_text: ^6.6.1
   excel: ^4.0.3
   csv: ^6.0.0
-  google_fonts: 6.2.0
+  google_fonts: ^6.2.1
   quran: ^1.2.5
   shared_preferences: ^2.2.2
   scrollable_positioned_list: ^0.3.8

@@ -19,21 +19,17 @@ String toArabicNumbers(String value) {
       .replaceAll('9', '٩');
 }
 
-List<List<dynamic>> listData = [];
-Future<void> load_Data() async{
-  final _rawData = await rootBundle.loadString("data/Tafseer.csv");
-  listData = const CsvToListConverter().convert(_rawData);
-}
-
-Future<Map<String, dynamic>> get_ayah_info(String ayah, bool isIndex) async {
+Future<Map<String, dynamic>> get_ayah_info(String ayah,bool isIndex) async {
   Map<String, String> ayahInfo = {
     'ayah': ayah,
     'surah': '؟',
     'tafsir': '؟',
     'number': '؟'
   };
+  final _rawData = await rootBundle.loadString("data/Tafseer.csv");
+  List<List<dynamic>> listData = const CsvToListConverter().convert(_rawData);
 
-  if (isIndex) {
+  if(isIndex){
     int index = int.parse(ayah);
     ayahInfo = {
       'ayah': '${listData[index][5]}',
@@ -41,20 +37,17 @@ Future<Map<String, dynamic>> get_ayah_info(String ayah, bool isIndex) async {
       'tafsir': '${listData[index][4]}',
       'number': toArabicNumbers(listData[index][2].toString()),
     };
-   
     return ayahInfo;
-  } else {
-    for (var row in listData) {
-      if (row[3] == ayah || row[5] == ayah) {
-        ayahInfo = {
-          'ayah': '${row[5]}',
-          'surah': all_Chapters[row[1] - 1],
-          'tafsir': '${row[4]}',
-          'number': toArabicNumbers(row[2].toString()),
-        };
-       
-        return ayahInfo;
-      }
+  }
+  for (var row in listData) {
+    if (row[3] == ayah || row[5] == ayah) {
+      ayahInfo = {
+        'ayah': '${row[5]}',
+        'surah': all_Chapters[row[1] - 1],
+        'tafsir': '${row[4]}',
+        'number': toArabicNumbers(row[2].toString()),
+      };
+      return ayahInfo;
     }
   }
   return ayahInfo;

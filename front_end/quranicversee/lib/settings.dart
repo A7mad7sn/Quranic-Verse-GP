@@ -15,15 +15,9 @@ class _SettingsState extends State<Settings> {
       child: Scaffold(
         appBar: AppBar(
           title: const Text(
-            "الإعدادات",
-            style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 25,
-              color: Color(0xffe0d2b4)
-            ),
-            textDirection: TextDirection.rtl,
+            "Settings",
           ),
-          backgroundColor: const Color(0xff195e59),
+          backgroundColor: const Color.fromARGB(255, 56, 115, 59),
         ),
         body: SafeArea(
           child: Padding(
@@ -32,18 +26,16 @@ class _SettingsState extends State<Settings> {
               child: Column(
                 children: [
                   const Text(
-                    'نظام الايات المتتالية:',
+                    'Arabic Font Size:',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 15,
                     ),
-                    textDirection: TextDirection.rtl,
                   ),
                   Slider(
                     value: arabicFontSize,
                     min: 20,
                     max: 40,
-                    activeColor: const Color.fromARGB(255, 0, 171, 169),
                     onChanged: (value) {
                       setState(() {
                         arabicFontSize = value;
@@ -53,7 +45,8 @@ class _SettingsState extends State<Settings> {
                   Text(
                     "‏ ‏‏ ‏‏‏‏ ‏‏‏‏‏‏ ‏",
                     style: TextStyle(
-                        fontFamily: 'quran', fontSize: arabicFontSize),
+                        fontFamily: 'quran',
+                        fontSize: arabicFontSize),
                     textDirection: TextDirection.rtl,
                   ),
                   const Padding(
@@ -61,18 +54,16 @@ class _SettingsState extends State<Settings> {
                     child: Divider(),
                   ),
                   const Text(
-                    'نظام المصحف:',
+                    'Mushaf Mode Font Size:',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 15,
                     ),
-                    textDirection: TextDirection.rtl,
                   ),
                   Slider(
                     value: mushafFontSize,
                     min: 20,
                     max: 50,
-                    activeColor: const Color.fromARGB(255, 0, 171, 169),
                     onChanged: (value) {
                       setState(() {
                         mushafFontSize = value;
@@ -82,7 +73,8 @@ class _SettingsState extends State<Settings> {
                   Text(
                     "‏ ‏‏ ‏‏‏‏ ‏‏‏‏‏‏ ‏",
                     style: TextStyle(
-                        fontFamily: 'quran', fontSize: mushafFontSize),
+                        fontFamily: 'quran',
+                        fontSize: mushafFontSize),
                     textDirection: TextDirection.rtl,
                   ),
                   const SizedBox(
@@ -99,23 +91,13 @@ class _SettingsState extends State<Settings> {
                             });
                             saveSettings();
                           },
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  const Color(0xff195e59)),
-                          child: const Text('إعادة ضبط',
-                              style: TextStyle(color: Color(0xffe0d2b4)))),
+                          child: const Text('Reset')),
                       ElevatedButton(
                           onPressed: () {
                             saveSettings();
                             Navigator.of(context).pop();
                           },
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  const Color(0xff195e59)),
-                          child: const Text(
-                            'حفظ',
-                            style: TextStyle(color: Color(0xffe0d2b4)),
-                          )),
+                          child: const Text('Save')),
                     ],
                   ),
                 ],

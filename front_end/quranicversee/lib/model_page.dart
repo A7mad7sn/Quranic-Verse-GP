@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:google_fonts/google_fonts.dart';
-import 'ayah_info.dart';
-import 'package:speech_to_text/speech_to_text.dart' as stt;
 
+import 'ayah_info.dart';
 
 class ModelPage extends StatefulWidget {
   ModelPage({Key? key}) : super(key: key);
@@ -19,62 +17,8 @@ class ModelPageState extends State<ModelPage> {
   List<dynamic> data = [];
   String? errorMessage;
   bool isSearched = false;
-  bool isLoading  = false;
-  final stt.SpeechToText _speech = stt.SpeechToText();
-  String _text = "";
-  bool _isListening = false;
-
-void initState() {
-    super.initState();
-    _initializeSpeech();
-  }
-
-  void _initializeSpeech() async {
-    bool available = await _speech.initialize(
-      onStatus: (status) {
-        print('status: $status');
-      },
-      onError: (error) {
-        print('error: $error');
-      },
-    );
-
-    if (!available) {
-      print('Speech recognition not available');
-    }
-  }
-
-  void _listen(BuildContext context) async {
-    if (!_isListening) {
-      setState(() {
-        _isListening = true;
-      });
-
-      _speech.listen(
-        onResult: (result) {
-          setState(() {
-            _text = result.recognizedWords;
-            // Set the recognized words to the text field
-            word.text = _text;
-          });
-        },
-        localeId: 'ar', // Setting locale to Arabic (Egypt)
-      );
-    } else {
-      setState(() {
-        _isListening = false;
-      });
-      _speech.stop();
-    }
-  }
-
 
   Future<void> searchVerses() async {
-
-    setState(() {
-      isLoading = true; // Set isLoading to true while fetching data
-    });
-
     String wordText = word.text;
     String jsonData = jsonEncode({
       'text': wordText,
@@ -95,20 +39,17 @@ void initState() {
         setState(() {
           data = List.from(responseBody);
           errorMessage = null;
-          isLoading = false;
         });
       } else {
         setState(() {
           data = [];
           errorMessage = 'Failed to load data: ${response.statusCode}';
-          isLoading = false;
         });
       }
     } catch (error) {
       setState(() {
         data = [];
         errorMessage = 'Error occurred: $error';
-        isLoading = false;
       });
     }
   }
@@ -118,19 +59,14 @@ void initState() {
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
-        backgroundColor: Color(0xffe8e0d5),
-        title: Text("Model Search",style: GoogleFonts.elMessiri(
-              textStyle: TextStyle(
-                  fontSize: 30,
-                  color: Color(0xff195e59),
-                  fontWeight: FontWeight.bold)),),
+        title: Text("Model Search"),
       ),
       body: Container(
         width: double.infinity,
         height: double.infinity,
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("images/back2.jpg"),
+            image: AssetImage("images/body-01.jpg"),
             fit: BoxFit.cover,
           ),
         ),
@@ -146,7 +82,7 @@ void initState() {
                   controller: word,
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: Color(0xffe8e0d5),
+                    fillColor: Color.fromRGBO(232, 223, 195, 1),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20),
                       borderSide: BorderSide(
@@ -157,22 +93,8 @@ void initState() {
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(width: 2),
                     ),
-                    labelText: 'Enter the topic',
-                    prefixIcon: Icon(Icons.search),
-                    suffixIcon: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                              icon: Icon(Icons.mic),
-                              onPressed: () {
-                                _listen(context);
-                              },
-                              color: _isListening
-                                  ? Color.fromARGB(255, 73, 48, 12)
-                                  : Color(0xff195e59)),
-                        ],
-                      ),
+                    labelText: 'Enter search word',
+                    suffixIcon: Icon(Icons.search),
                   ),
                 ),
               ),
@@ -185,7 +107,7 @@ void initState() {
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: Color(0xffe8e0d5),
+                    fillColor: Color.fromRGBO(232, 223, 195, 1),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20),
                       borderSide: BorderSide(
@@ -209,7 +131,7 @@ void initState() {
               child: ElevatedButton(
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all(
-                      Color(0xffe8e0d5)),
+                      Color.fromRGBO(232, 223, 195, 1)),
                 ),
                 onPressed: () {
                   searchVerses();
@@ -225,9 +147,7 @@ void initState() {
               ),
             ),
             if (errorMessage != null) Text(errorMessage!),
-            if (isLoading) // Show loading indicator if isLoading is true
-                CircularProgressIndicator(color: Color(0xff195e59),),
-            if (isSearched && !isLoading)
+            if (isSearched)
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -244,23 +164,18 @@ void initState() {
                 itemBuilder: (context, index) {
                   final result = data[index];
                   return Card(
-                    color: Color(0xff195e59),
                     elevation: 3,
                     margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     child: ListTile(
                         title: Text(
                           "${index + 1}",
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xffe0d2b4)),
+                          style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         subtitle: Text(
                           '${result['ayah'] ?? ''}',
-                          style: TextStyle(color: Colors.white),
                         ),
                         trailing: IconButton(
                           icon: Icon(Icons.info),
-                          color: Color(0xffe0d2b4),
                           onPressed: () async {
                             var info = await get_ayah_info(result['ayah'],false);
                             showDialog(
