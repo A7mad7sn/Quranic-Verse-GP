@@ -6,16 +6,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_islamic_icons/flutter_islamic_icons.dart';
 import 'package:http/http.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:quranicversee/home_page.dart';
 import 'package:quranicversee/quran_main.dart';
 import 'package:quranicversee/search_page.dart';
 import 'package:quranicversee/voice_search_page.dart';
 import 'package:quranicversee/model_page.dart';
-
+import 'package:quranicversee/home_page.dart';
 import 'ayah_info.dart';
 import 'index.dart';
 
 void main() {
-
   runApp(MyApp());
 }
 
@@ -23,19 +23,21 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    load_Data();
     return MaterialApp(
-      title: 'Quranic Verse',
-      home: HomePage(),
+      
+      home: BaseScreen(),
+      debugShowCheckedModeBanner: false,
     );
   }
 }
 
-class HomePage extends StatefulWidget {
+class BaseScreen extends StatefulWidget {
   @override
-  _HomePageState createState() => _HomePageState();
+  _BaseScreenState createState() => _BaseScreenState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _BaseScreenState extends State<BaseScreen> {
   bool loading = false;
   List data = [];
 
@@ -43,9 +45,9 @@ class _HomePageState extends State<HomePage> {
   final items = <Widget>[
     Icon(Icons.home, size: 30),
     Icon(Icons.search_outlined, size: 30),
-    Icon(Icons.mic, size: 30),
-    Icon(FlutterIslamicIcons.quran2, size: 30),
-    Icon(FlutterIslamicIcons.tasbih2, size: 30),
+   
+    Icon(Icons.settings)
+    
   ];
   int index = 2;
 
@@ -54,12 +56,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       extendBody: true,
       backgroundColor: Colors.black,
-      appBar: AppBar(
-        title: Text('Quranic Verse', style: TextStyle(color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold)),
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
+      
       body: Container(
         width: double.infinity,
         height: double.infinity,
@@ -69,32 +66,30 @@ class _HomePageState extends State<HomePage> {
             fit: BoxFit.cover,
           ),
         ),
-        child: QuranApp(),
+        child: HomePage(),
       ),
-      bottomNavigationBar: Theme(
-        data: Theme.of(context).copyWith(iconTheme: IconThemeData(color: Colors.amber.shade50)),
+     bottomNavigationBar:Theme(
+        data: Theme.of(context).copyWith(
+          iconTheme: IconThemeData(color: Colors.amber.shade50),
+        ),
         child: CurvedNavigationBar(
           items: items,
           index: index,
           onTap: (index) {
             setState(() {
-              if (index == 1) {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) => SearchPage()));
-              }else if (index==2) {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => VoiceSearchPage())); 
-              }else if (index==3) {
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => ModelPage())); 
+              if (index==1){
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => SearchPage()));
               }
-              else {
-                this.index=index;
-              }
+              this.index = index;
             });
           },
-          backgroundColor: Colors.transparent,
-          color: Colors.orange,
+          backgroundColor: Color(0xffe0d2b4),
+          color: Color(0xff195e59),
           animationCurve: Curves.ease,
           animationDuration: Duration(milliseconds: 300),
-          buttonBackgroundColor: Colors.amber.shade500,
+          buttonBackgroundColor: Color(0xffe0d2b4),
+          
+          // Set button background color to transparent
         ),
       ),
     );
