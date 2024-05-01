@@ -81,7 +81,7 @@ def predict():
     input_text = data['text']
     input_verse = data['verseNumber']
     features = preprocess(input_text)
-    model = load_model('C:\\Users\\boody\Downloads\gp\\Lstm_model_100epochs.h5')
+    model = load_model('Lstm_model_100epochs.h5')
     last_dense_output = model.predict(features)
     top_N_verse = rank_N_verse(last_dense_output, input_verse)
 

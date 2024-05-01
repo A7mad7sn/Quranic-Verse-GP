@@ -1,5 +1,6 @@
 import pandas as pd
 from qalsadi.lemmatizer import Lemmatizer
+import re
 
 quran_surahs_arabic = [
     "الفاتحة", "البقرة", "آل عمران", "النساء", "المائدة",
@@ -27,11 +28,13 @@ quran_surahs_arabic = [
     "المسد", "الإخلاص", "الفلق", "الناس"
 ]
 
+
 def basic_search(sentence, verses):
     found_verses = []
     found_indices = []
 
     for index, verse in enumerate(verses):
+
         if sentence in verse:
             found_verses.append(verse)
             found_indices.append(index)
@@ -101,15 +104,17 @@ def perform_search(word, choice):
     verse_info, verses, column, tafseer = read_csv2("Tafseer.xlsx")
     lemmatized_tafsir = read_csv3("lemmatized_tafsser.xlsx")
 
+    hamza_alef_pattern = re.compile(r'[إأآٱ]')
+    waw_hamza_pattern = re.compile(r'[ؤٷٶ]')
+    word = re.sub(hamza_alef_pattern, 'ا', word)
+    word = re.sub(waw_hamza_pattern, 'و', word)
     if choice == 1:
         result, indices = basic_search(word, preproc_verses)
     elif choice == 2:
         result, indices = find_verse_with_word_subset(word, preproc_verses, verses)
     elif choice == 3:
-        lemmatizer = Lemmatizer()
-        lemma = lemmatizer.lemmatize(word)
-        result_1, indices_1 = find_verse_with_word_subset(lemma, lemmatized_tafsir, verses)
-        result_2, indices_2 = find_verse_with_word_subset(lemma, lemmatized_verses, verses)
+        result_1, indices_1 = find_verse_with_word_subset(word, tafseer, verses)
+        result_2, indices_2 = find_verse_with_word_subset(word, preproc_verses, verses)
         combined_result = result_1 + result_2
         combined_indices = indices_1 + indices_2
         result = list(set(combined_result))

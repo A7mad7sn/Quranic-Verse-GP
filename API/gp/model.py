@@ -60,7 +60,7 @@ def preprocess(text):
 
     # Feature Extraction
 
-    with open('C:\\Users\\boody\Downloads\gp\\tokenizer.pickle', 'rb') as handle:
+    with open('tokenizer.pickle', 'rb') as handle:
         tokenizer = pickle.load(handle)
 
     text = [text]
@@ -75,7 +75,7 @@ def rank_N_verse(output_list, N):
     top_100_indices = np.argsort(flat_array)[-N:][::-1]
 
     # Loading the encoder
-    with open('C:\\Users\\boody\Downloads\gp\\onehot_encoder.pkl', 'rb') as handle:
+    with open('onehot_encoder.pkl', 'rb') as handle:
         encoder = pickle.load(handle)
 
     top_N_verse = []
