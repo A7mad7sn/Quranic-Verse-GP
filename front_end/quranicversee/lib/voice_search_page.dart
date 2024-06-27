@@ -16,7 +16,7 @@ class VoiceSearchPageState extends State<VoiceSearchPage> {
   bool _isListening = false;
 
   Map<String, int> arabicToInteger = {
-    "الأولى":   1,
+    "الاولى":   1,
     "الثانيه": 2,
     "الثالثه": 3,
     "الرابعه": 4,
@@ -25,7 +25,18 @@ class VoiceSearchPageState extends State<VoiceSearchPage> {
     "السابعه": 7,
     "الثامنه": 8,
     "التاسعه": 9,
-    "العاشره": 10
+    "العاشره": 10,
+    "واحد":   1,
+    "اثنين": 2,
+    "اثنان": 2,
+    "ثلاثه": 3,
+    "اربعه": 4,
+    "خمسه": 5,
+    "سته": 6,
+    "سبعه": 7,
+    "ثمانيه": 8,
+    "تسعه": 9,
+    "عشره": 10
   };
 
   

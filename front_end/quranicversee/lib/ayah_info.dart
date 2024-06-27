@@ -2,25 +2,12 @@ import 'package:csv/csv.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:quranicversee/functions.dart';
 
 import 'constant.dart';
 
-String toArabicNumbers(String value) {
-  return value
-      .replaceAll('0', '٠')
-      .replaceAll('1', '١')
-      .replaceAll('2', '٢')
-      .replaceAll('3', '٣')
-      .replaceAll('4', '٤')
-      .replaceAll('5', '٥')
-      .replaceAll('6', '٦')
-      .replaceAll('7', '٧')
-      .replaceAll('8', '٨')
-      .replaceAll('9', '٩');
-}
-
 List<List<dynamic>> listData = [];
-Future<void> load_Data() async{
+Future<void> load_Data() async {
   final _rawData = await rootBundle.loadString("data/Tafseer.csv");
   listData = const CsvToListConverter().convert(_rawData);
 }
@@ -36,28 +23,66 @@ Future<Map<String, dynamic>> get_ayah_info(String ayah, bool isIndex) async {
   if (isIndex) {
     int index = int.parse(ayah);
     ayahInfo = {
-      'ayah': '${listData[index][5]}',
+      'ayah': '${listData[index][3]}',
       'surah': all_Chapters[listData[index][1] - 1],
       'tafsir': '${listData[index][4]}',
       'number': toArabicNumbers(listData[index][2].toString()),
     };
-   
+
     return ayahInfo;
   } else {
     for (var row in listData) {
       if (row[3] == ayah || row[5] == ayah) {
         ayahInfo = {
-          'ayah': '${row[5]}',
+          'ayah': '${row[3]}',
           'surah': all_Chapters[row[1] - 1],
           'tafsir': '${row[4]}',
           'number': toArabicNumbers(row[2].toString()),
         };
-       
+
         return ayahInfo;
       }
     }
   }
   return ayahInfo;
+}
+
+Future<Map<String, dynamic>> get_tafsir_info(String tafsir) async {
+  Map<String, String> tafsirInfo = {
+    'ayah': '؟',
+    'surah': '؟',
+    'tafsir': tafsir,
+    'number': '؟'
+  };
+
+  for (var row in listData) {
+    if (row[4] == tafsir) {
+      tafsirInfo = {
+        'ayah': '${row[3]}',
+        'surah': all_Chapters[row[1] - 1],
+        'tafsir': '${row[4]}',
+        'number': toArabicNumbers(row[2].toString()),
+      };
+      break;
+    }
+  }
+  return tafsirInfo;
+}
+
+List<String> get_all_ayat() {
+  List<String> all_ayat = [];
+  for (var row in listData) {
+    all_ayat.add(row[5]);
+  }
+  return all_ayat;
+}
+
+List<String> get_all_tafsir() {
+  List<String> all_tafsir = [];
+  for (var row in listData) {
+    all_tafsir.add(row[4]);
+  }
+  return all_tafsir;
 }
 
 Widget view_ayah_info(Map<String, dynamic> info) {
@@ -74,7 +99,7 @@ Widget view_ayah_info(Map<String, dynamic> info) {
             text: TextSpan(
               children: [
                 TextSpan(
-                  text: 'الاية : ',
+                  text: 'الآية : ',
                   style: TextStyle(color: c1), // Color for the label
                 ),
                 TextSpan(
@@ -112,7 +137,7 @@ Widget view_ayah_info(Map<String, dynamic> info) {
             text: TextSpan(
               children: [
                 TextSpan(
-                  text: 'رقم الاية : ',
+                  text: 'رقم الآية : ',
                   style: TextStyle(color: c1), // Color for the label
                 ),
                 TextSpan(
@@ -152,7 +177,7 @@ Widget view_ayah_info(Map<String, dynamic> info) {
 
 Widget build_info_Dialog(var info, context) {
   return AlertDialog(
-    title: const Text('معلومات الاية',
+    title: const Text('معلومات الآية',
         textDirection:
             TextDirection.rtl, // Right-to-left text direction for this text
         textAlign: TextAlign.center,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:quranicversee/search_page.dart';
 import 'arabic_sura_number.dart';
-import 'mydrawer.dart';
-import 'settings.dart';
+import 'mic_button.dart';
 import 'surah_builder.dart';
 import 'constant.dart';
 
@@ -14,12 +14,13 @@ class IndexPage extends StatefulWidget {
 
 //الصفحة الرئيسية اللى بيتعرض فيها اسماء السور
 class _IndexPageState extends State<IndexPage> {
+  Color _8am2 = Color(0xff195e59);
+  Color _fat7 = Color(0xffe0d2b4);
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const MyDrawer(),
       floatingActionButton: FloatingActionButton(
-        tooltip: 'Go to bookmark',
+        tooltip: 'إذهب إلى العلامة المرجعية',
         backgroundColor: const Color.fromARGB(255, 0, 77, 64),
         onPressed: () async {
           fabIsClicked = true;
@@ -28,12 +29,25 @@ class _IndexPageState extends State<IndexPage> {
                 context,
                 MaterialPageRoute(
                     builder: (context) => SurahBuilder(
-                      arabic: quran[0],
-                      sura: bookmarkedSura - 1,
-                      suraName: arabicName[bookmarkedSura - 1]['name'],
-                      ayah: bookmarkedAyah,
-                      highlighted: true,
-                    )));
+                          arabic: quran[0],
+                          sura: bookmarkedSura - 1,
+                          suraName: arabicName[bookmarkedSura - 1]['name'],
+                          ayah: bookmarkedAyah,
+                          highlighted: true,
+                        )));
+          } else {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                backgroundColor: _8am2,
+                content: Text(
+                  "لا توجد علامة مرجعية",
+                  style: TextStyle(color: _fat7, fontSize: 20),
+                  textDirection: TextDirection.rtl,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            );
           }
         },
         child: const Icon(
@@ -42,6 +56,28 @@ class _IndexPageState extends State<IndexPage> {
         ),
       ),
       appBar: AppBar(
+        leading: MicButton(),
+        actions: [
+          IconButton(
+            color: _fat7,
+            icon: Icon(Icons.search),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SearchPage()),
+              );
+            },
+          ),
+          IconButton(
+            icon: Icon(
+              Icons.keyboard_arrow_right_outlined,
+              color: _fat7,
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ],
         centerTitle: true,
         title: const Text(
           "القرآن الكريم",
@@ -54,23 +90,13 @@ class _IndexPageState extends State<IndexPage> {
           ),
         ),
         backgroundColor: const Color(0xff195e59),
-        /*leading: IconButton(
-            tooltip: 'Font Size',
-            icon: const Icon(
-              Icons.settings,
-              color: Colors.white,
-            ),
-            onPressed: () {
-              Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const Settings()));
-            },
-          )*/),
+      ),
       body: FutureBuilder(
         future: readJson(),
         builder: (
-            BuildContext context,
-            AsyncSnapshot snapshot,
-            ) {
+          BuildContext context,
+          AsyncSnapshot snapshot,
+        ) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.connectionState == ConnectionState.done) {
@@ -113,7 +139,7 @@ class _IndexPageState extends State<IndexPage> {
                     ),
                     const Expanded(child: SizedBox()),
                     Text(
-                      arabicName[i]['name'],
+                      arabicName2[i]['name'],
                       style: const TextStyle(
                           fontSize: 30,
                           color: Colors.black87,
@@ -135,11 +161,11 @@ class _IndexPageState extends State<IndexPage> {
                     context,
                     MaterialPageRoute(
                         builder: (context) => SurahBuilder(
-                          arabic: quran[0],
-                          sura: i,
-                          suraName: arabicName[i]['name'],
-                          ayah: 0,
-                        )),
+                              arabic: quran[0],
+                              sura: i,
+                              suraName: arabicName[i]['name'],
+                              ayah: 0,
+                            )),
                   );
                 },
               ),

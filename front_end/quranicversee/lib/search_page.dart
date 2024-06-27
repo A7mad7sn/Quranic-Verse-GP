@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:quranicversee/functions.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
-
 import 'ayah_info.dart';
+import 'to_arabic_numbers.dart';
+import 'surah_builder.dart';
 
 class SearchPage extends StatefulWidget {
   SearchPage({Key? key}) : super(key: key);
@@ -15,7 +14,7 @@ class SearchPage extends StatefulWidget {
 }
 
 class SearchPageState extends State<SearchPage> {
-  TextEditingController word = TextEditingController();
+  TextEditingController _word = TextEditingController();
   int selectedRadio = 1;
   List<dynamic> data = [];
   String? errorMessage;
@@ -24,6 +23,10 @@ class SearchPageState extends State<SearchPage> {
   final stt.SpeechToText _speech = stt.SpeechToText();
   String _text = "";
   bool _isListening = false;
+  List<String> all_ayat = get_all_ayat();
+  List<String> all_tafsir = get_all_tafsir();
+  bool _isChecked = false;
+  String _selectedOption = "القرآن";
 
   @override
   void initState() {
@@ -57,7 +60,7 @@ class SearchPageState extends State<SearchPage> {
           setState(() {
             _text = result.recognizedWords;
             // Set the recognized words to the text field
-            word.text = _text;
+            _word.text = _text;
           });
         },
         localeId: 'ar', // Setting locale to Arabic (Egypt)
@@ -70,63 +73,111 @@ class SearchPageState extends State<SearchPage> {
     }
   }
 
-  Future<void> searchVerses() async {
+  Future<void> searchVerses(List<String> searchList) async {
     setState(() {
-      isLoading = true; // Set isLoading to true while fetching data
+      data = [];
+      isLoading = true;
     });
 
-    String wordText = word.text;
-    String jsonData = jsonEncode({
-      'word': wordText,
-      'choice': selectedRadio,
-    });
+    await Future.delayed(const Duration(milliseconds: 200));
 
-    try {
-      var response = await http.post(
-        Uri.parse("http://127.0.0.1:5000/search"),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonData,
-      );
+    String query = _word.text;
 
-      if (response.statusCode == 200) {
-        var responseBody = jsonDecode(response.body);
-        setState(() {
-          data = List.from(responseBody);
-          errorMessage = null;
-          isLoading =
-              false; // Set isLoading back to false after data is fetched
-        });
+    if (_isChecked == false) {
+      // Basic Search
+      if (query.contains(RegExp(r'[ؤئأإ]'))) {
+        String v1 = query.replaceAll(RegExp(r'[ؤئأإ]'), 'أ');
+        String v2 = query.replaceAll(RegExp(r'[ؤئأإ]'), 'ئ');
+        String v3 = query.replaceAll(RegExp(r'[ؤئأإ]'), 'ؤ');
+        String v4 = query.replaceAll(RegExp(r'[ؤئأإ]'), 'ا');
+        String v5 = query.replaceAll(RegExp(r'[أإ]'), 'ا');
+        print(v1 + v2 + v3 + v4);
+        List<String> matches = searchList
+            .where((ayah) =>
+                ayah.contains(v1) ||
+                ayah.contains(v2) ||
+                ayah.contains(v3) ||
+                ayah.contains(v4) ||
+                ayah.contains(v5))
+            .toList();
+        for (String match in matches) {
+          data.add(await get_ayah_info(match, false));
+        }
       } else {
-        setState(() {
-          data = [];
-          errorMessage = 'Failed to load data: ${response.statusCode}';
-          isLoading = false; // Set isLoading back to false on error
-        });
+        List<String> matches =
+            searchList.where((ayah) => ayah.contains(query)).toList();
+
+        for (String match in matches) {
+          if (_selectedOption == "القرآن") {
+            data.add(await get_ayah_info(match, false));
+          } else {
+            data.add(await get_tafsir_info(match));
+          }
+        }
       }
-    } catch (error) {
-      setState(() {
-        data = [];
-        errorMessage = 'Error occurred: $error';
-        isLoading = false; // Set isLoading back to false on error
-      });
+    } else {
+      // Root Search
+      bool searchWordInVerse(String word, String verse) {
+        List<String> words = verse.split(' ');
+
+        for (String w in words) {
+          List<String> letters = w.split('');
+          int index = 0;
+
+          for (String letter in letters) {
+            if (letter == word[index]) {
+              index++;
+              if (index == word.length) {
+                return true;
+              }
+            }
+          }
+        }
+        return false;
+      }
+
+      List<String> words = query.split(' ');
+      for (String element in searchList) {
+        if (words.every((word) => searchWordInVerse(word, element))) {
+          if (_selectedOption == "القرآن") {
+            data.add(await get_ayah_info(element, false));
+          } else {
+            data.add(await get_tafsir_info(element));
+          }
+        }
+      }
     }
+
+    setState(() {
+      isLoading = false;
+      isSearched = true;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    Color _8am2 = Color(0xff195e59);
+    Color _fat7 = Color(0xffe0d2b4);
     return Scaffold(
       extendBody: true,
       appBar: AppBar(
-        backgroundColor: Color(0xffe8e0d5),
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back,
+            color: _fat7,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        centerTitle: true,
+        backgroundColor: _8am2,
         title: Text(
-          'Quran Search',
+          'محرك البحث',
+          textDirection: TextDirection.rtl,
           style: GoogleFonts.elMessiri(
               textStyle: TextStyle(
-                  fontSize: 30,
-                  color: Color(0xff195e59),
-                  fontWeight: FontWeight.bold)),
+                  fontSize: 30, color: _fat7, fontWeight: FontWeight.bold)),
         ),
       ),
       body: Container(
@@ -144,10 +195,16 @@ class SearchPageState extends State<SearchPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                width: 500,
                 child: Center(
                   child: TextField(
-                    controller: word,
+                    textDirection: TextDirection.rtl,
+                    onSubmitted: (value) async {
+                      if (_selectedOption == "القرآن")
+                        await searchVerses(all_ayat);
+                      else
+                        await searchVerses(all_tafsir);
+                    },
+                    controller: _word,
                     decoration: InputDecoration(
                       filled: true,
                       fillColor: Color(0xffe8e0d5),
@@ -161,7 +218,7 @@ class SearchPageState extends State<SearchPage> {
                       focusedBorder: OutlineInputBorder(
                         borderSide: BorderSide(width: 2),
                       ),
-                      labelText: 'Enter search word',
+                      labelText: 'أدخل كلمة البحث',
                       prefixIcon: Icon(Icons.search),
                       suffixIcon: Row(
                         mainAxisAlignment: MainAxisAlignment.end,
@@ -181,102 +238,101 @@ class SearchPageState extends State<SearchPage> {
                   ),
                 ),
               ),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
+              SizedBox(
+                height: 10,
+              ),
+              Container(
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(20),color: _fat7),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Row(
-                      children: [
-                        Radio(
-                          activeColor: Color(0xff195e59),
-                          value: 1,
-                          groupValue: selectedRadio,
-                          onChanged: (value) {
-                            setState(() {
-                              selectedRadio = value!;
-                            });
-                          },
+                    DropdownButtonHideUnderline(
+                      child: DropdownButton<String>(
+                        alignment: Alignment.centerRight,
+                        style: TextStyle(
+                          color: _8am2,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                          
                         ),
-                        Text(
-                          'Basic Search',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w600),
-                        )
-                      ],
+                        value: _selectedOption,
+                        items: <String>['القرآن', ' التفسير المختصر'].map((String value) {
+                          return DropdownMenuItem<String>(
+                            alignment: Alignment.centerRight,
+                            value: value,
+                            child: Text(value),
+                          );
+                        }).toList(),
+                        onChanged: (newValue) {
+                          setState(() {
+                            _selectedOption = newValue!;
+                          });
+                        },
+                      ),
                     ),
-                    Row(
-                      children: [
-                        Radio(
-                          activeColor: Color(0xff195e59),
-                          value: 2,
-                          groupValue: selectedRadio,
-                          onChanged: (value) {
-                            setState(() {
-                              selectedRadio = value!;
-                            });
-                          },
-                        ),
-                        Text(
-                          'Search using Subset',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w600),
-                        ),
-                      ],
-                    ),
-                    Row(
-                      children: [
-                        Radio(
-                          activeColor: Color(0xff195e59),
-                          value: 3,
-                          groupValue: selectedRadio,
-                          onChanged: (value) {
-                            setState(() {
-                              selectedRadio = value!;
-                            });
-                          },
-                        ),
-                        Text(
-                          'Deep Search in Tafseer',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                      ],
+                    Text(
+                      'البحث في : ',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      textDirection: TextDirection.rtl,
                     ),
                   ],
                 ),
               ),
-              ElevatedButton(
-                style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStatePropertyAll(Color(0xffe8e0d5))),
-                onPressed: () {
-                  searchVerses();
-                  setState(() {
-                    isSearched = true;
-                  });
-                },
-                child: Text(
-                  'Search',
-                  style: TextStyle(
-                      color: Colors.black, fontWeight: FontWeight.bold),
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Checkbox(
+                    value: _isChecked,
+                    onChanged: (value) {
+                      setState(() {
+                        _isChecked = value!;
+                      });
+                    },
+                    checkColor: _fat7,
+                    activeColor: _8am2,
+                  ),
+                  Text(
+                    'كلمة جذرية',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    textDirection: TextDirection.rtl,
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 60,right: 60),
+                      child: ElevatedButton(
+                        style: ButtonStyle(backgroundColor: WidgetStateProperty.all(_fat7)),
+                        onPressed: () async {
+                          if (_selectedOption == "القرآن")
+                                await searchVerses(all_ayat);
+                              else
+                                await searchVerses(all_tafsir);
+                        },
+                        child: Text('بحث',style: TextStyle(color: _8am2,fontWeight: FontWeight.bold,fontSize: 18),),
+                      ),
+                    ),
+                  ),
+                ],
               ),
               SizedBox(
                 height: 10,
               ),
-              if (errorMessage != null) Text(errorMessage!),
               if (isLoading) // Show loading indicator if isLoading is true
                 CircularProgressIndicator(
                   color: Color(0xff195e59),
                 ),
               if (isSearched && !isLoading)
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      '${data.length} Search Results',
-                      style: TextStyle(fontSize: 18),
+                      '${toArabicNumbers(data.length.toString())} نتيجة',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      textDirection: TextDirection.rtl,
                     ),
                   ],
                 ),
@@ -291,14 +347,23 @@ class SearchPageState extends State<SearchPage> {
                       elevation: 3,
                       margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                       child: ListTile(
+                        onTap: () {
+                          navigateToQuranVerse(
+                              context,
+                              int.parse(toEnglishNumbers(result['number'])),
+                              result['surah']);
+                        },
                         title: Text(
-                          result['Surah Name'] ?? '',
+                          result['surah'] ?? '',
+                          textDirection: TextDirection.rtl,
                           style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: Color(0xffe0d2b4)),
                         ),
                         subtitle: Text(
-                          'الأية ${toArabicNumbers(result['Verse Number'].toString())}: ${result['Verse'] ?? ''}',
+                          'الآية ${toArabicNumbers(result['number'].toString())} : ${result['ayah'] ?? ''}',
+                          textDirection: TextDirection.rtl,
+                          textAlign: TextAlign.right,
                           style: TextStyle(color: Colors.white),
                         ),
                         trailing: IconButton(
@@ -306,7 +371,7 @@ class SearchPageState extends State<SearchPage> {
                           color: Color(0xffe0d2b4),
                           onPressed: () async {
                             var info =
-                                await get_ayah_info(result['Verse'], false);
+                                await get_ayah_info(result['ayah'], false);
                             showDialog(
                               context: context,
                               builder: (context) =>

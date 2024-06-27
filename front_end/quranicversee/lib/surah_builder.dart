@@ -14,11 +14,11 @@ class SurahBuilder extends StatefulWidget {
 
   SurahBuilder(
       {Key? key,
-        this.sura,
-        this.arabic,
-        this.suraName,
-        required this.ayah,
-        this.highlighted = false})
+      this.sura,
+      this.arabic,
+      this.suraName,
+      required this.ayah,
+      this.highlighted = false})
       : super(key: key);
 
   @override
@@ -66,8 +66,8 @@ class _SurahBuilderState extends State<SurahBuilder> {
                   fontFamily: arabicFont,
                   color: widget.highlighted == true
                       ? index == widget.ayah
-                      ? const Color.fromARGB(255, 200, 0, 0)
-                      : const Color.fromARGB(196, 0, 0, 0)
+                          ? const Color.fromARGB(255, 200, 0, 0)
+                          : const Color.fromARGB(196, 0, 0, 0)
                       : const Color.fromARGB(196, 0, 0, 0),
                 ),
               ),
@@ -103,105 +103,108 @@ class _SurahBuilderState extends State<SurahBuilder> {
         color: const Color.fromARGB(255, 253, 251, 240),
         child: view
             ? ScrollablePositionedList.builder(
-          itemBuilder: (BuildContext context, int index) {
-            return Column(
-              children: [
-                (index != 0) || (widget.sura == 0) || (widget.sura == 8)
-                    ? const Text('')
-                    : const RetunBasmala(),
-                Container(
-                  color: index % 2 != 0
-                      ? const Color.fromARGB(255, 253, 251, 240)
-                      : const Color.fromARGB(255, 253, 247, 230),
-                  child: PopupMenuButton(
-                    tooltip:'',
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: verseBuilder(index, previousVerses),
-                      ),
-                      itemBuilder: (context) => [
-                        PopupMenuItem(
-                          onTap: () {
-                            saveBookMark(widget.sura + 1, index);
-                          },
-                          child: const Row(
-                            children: [
-                              Icon(
-                                Icons.bookmark_add,
-                                color: Color(0xff195e59),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Text('Bookmark'),
-                            ],
-                          ),
-                        ),
-                        PopupMenuItem(
-                          onTap: () async {
-                            int indexer = index+previousVerses+1;
-                            var info = await get_ayah_info('${indexer}',true);
-                            showDialog(
-                              context: context,
-                              builder: (context) =>
-                                  build_info_Dialog(info, context),
-                            );
-                          },
-                          child: const Row(
-                            //mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Icon(
-                                Icons.account_tree_outlined,
-                                color:
-                                Color.fromARGB(255, 213, 54, 0),
-                              ),
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Text('معلومات الاية'),
-                            ],
-                          ),
-                        ),
-                      ]),
-                ),
-              ],
-            );
-          },
-          itemScrollController: itemScrollController,
-          itemPositionsListener: itemPositionsListener,
-          itemCount: LenghtOfSura,
-        )
-            : ListView(
-          children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                itemBuilder: (BuildContext context, int index) {
+                  return Column(
                     children: [
-                      widget.sura + 1 != 1 && widget.sura + 1 != 9
-                          ? const RetunBasmala()
-                          : const Text(''),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          fullSura, //mushaf mode
-                          textDirection: TextDirection.rtl,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: mushafFontSize,
-                            fontFamily: arabicFont,
-                            color: const Color.fromARGB(196, 44, 44, 44),
-                          ),
+                      (index != 0) || (widget.sura == 0) || (widget.sura == 8)
+                          ? const Text('')
+                          : const RetunBasmala(),
+                      Container(
+                        color: index % 2 != 0
+                            ? const Color.fromARGB(255, 253, 251, 240)
+                            : const Color.fromARGB(255, 253, 247, 230),
+                        child: PopupMenuButton(
+                            tooltip: '',
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: verseBuilder(index, previousVerses),
+                            ),
+                            itemBuilder: (context) => [
+                                  // Book Mark
+                                  PopupMenuItem(
+                                    onTap: () {
+                                      saveBookMark(widget.sura + 1, index);
+                                    },
+                                    child: const Row(
+                                      children: [
+                                        Icon(
+                                          Icons.bookmark_add,
+                                          color: Color(0xff195e59),
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Text('علامة مرجعية'),
+                                      ],
+                                    ),
+                                  ),
+                                  // aya info
+                                  PopupMenuItem(
+                                    onTap: () async {
+                                      int indexer = index + previousVerses + 1;
+                                      var info = await get_ayah_info(
+                                          '${indexer}', true);
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) =>
+                                            build_info_Dialog(info, context),
+                                      );
+                                    },
+                                    child: const Row(
+                                      //mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                      children: [
+                                        Icon(
+                                          Icons.account_tree_outlined,
+                                          color:
+                                              Color.fromARGB(255, 213, 54, 0),
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        Text('معلومات الاية'),
+                                      ],
+                                    ),
+                                  ),
+                                ]),
+                      ),
+                    ],
+                  );
+                },
+                itemScrollController: itemScrollController,
+                itemPositionsListener: itemPositionsListener,
+                itemCount: LenghtOfSura,
+              )
+            : ListView(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            widget.sura + 1 != 1 && widget.sura + 1 != 9
+                                ? const RetunBasmala()
+                                : const Text(''),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(
+                                fullSura, //mushaf mode
+                                textDirection: TextDirection.rtl,
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: mushafFontSize,
+                                  fontFamily: arabicFont,
+                                  color: const Color.fromARGB(196, 44, 44, 44),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                ),
-              ],
-            ),
-          ],
-        ),
+                ],
+              ),
       ),
     );
   }
@@ -209,11 +212,25 @@ class _SurahBuilderState extends State<SurahBuilder> {
   @override
   Widget build(BuildContext context) {
     int LengthOfSura = noOfVerses[widget.sura];
-
+    Color _8am2 = Color(0xff195e59);
+    Color _fat7 = Color(0xffe0d2b4);
     return MaterialApp(
+        debugShowCheckedModeBanner: false, 
+
       theme: ThemeData(primarySwatch: Colors.yellow),
       home: Scaffold(
         appBar: AppBar(
+          actions: [
+            IconButton(
+              icon: Icon(
+                Icons.keyboard_arrow_right_outlined,
+                color: _fat7,
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
           leading: Tooltip(
             message: 'Mushaf Mode',
             child: TextButton(
@@ -272,9 +289,11 @@ class RetunBasmala extends StatelessWidget {
   }
 }
 
-void navigateToQuranVerse(BuildContext context, int verseNumber, String suraName) {
+void navigateToQuranVerse(
+    BuildContext context, int verseNumber, String suraName) {
+  suraName = suraName.replaceAll("ياسين", 'يس').replaceAll('أ', 'ا').replaceAll('إ', 'ا');
   int suraIndex = 0;
-  if(suraName[suraName.length-1]=="ه"&& suraName != "طه"){
+  if (suraName[suraName.length - 1] == "ه" && suraName != "طه") {
     suraName = '${suraName.substring(0, suraName.length - 1)}ة';
   }
 
@@ -285,14 +304,12 @@ void navigateToQuranVerse(BuildContext context, int verseNumber, String suraName
   }
   // Replace this with your actual navigation logic to the Quran widget
   Navigator.of(context).push(MaterialPageRoute(
-      builder: (context) =>
-          SurahBuilder(
+      builder: (context) => SurahBuilder(
             arabic: quran[0],
             sura: suraIndex - 1,
             suraName: arabicName[suraIndex - 1]['name'],
             ayah: verseNumber - 1,
             highlighted: true,
-
           )));
   print('Navigating to verse $verseNumber of $suraName in the Quran...');
 }
